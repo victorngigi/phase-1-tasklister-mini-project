@@ -6,6 +6,19 @@ document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("create-task-form");
   const tasks = document.getElementById("tasks");
 
+  //priosrity selector dropdwown menu
+  const prioritySelector = document.createElement("select");
+  prioritySelector.id = "taskPriority";
+  const priorities = ["High", "Medium", "Low"];
+  priorities.forEach((priority) => {
+    const option = document.createElement("option");
+    option.value = priority;
+    option.textContent = priority;
+    prioritySelector.appendChild(option);
+  });
+
+  form.insertBefore(prioritySelector, form.lastElementChild);
+
   //next we add the event listener for the submit button on the form
 
   form.addEventListener("submit", function (event) {
@@ -28,7 +41,42 @@ document.addEventListener("DOMContentLoaded", () => {
     //create a new element in the HTML
     const listItem = document.createElement("li");
     listItem.textContent = task;
+    const priority = document.getElementById("taskPriority").value;
+    listItem.style.color = getPriorityColor(priority);
 
+    const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "x";
+    deleteBtn.addEventListener("click", function () {
+      listItem.remove();
+    });
+
+    const editBtn = document.createElement("button");
+    editBtn.textContent = "edit";
+    editBtn.addEventListener("click", function () {
+      const editTask = prompt("Edit your task:", task);
+      if (editTask !== null && editTask.trim() !== "") {
+        listItem.textContent = editTask.trim();
+        listItem.style.color = getPriorityColor(priority);
+        listItem.appendChild(editBtn);
+        listItem.prepend(deleteBtn);
+      }
+    });
+
+    listItem.appendChild(editBtn);
+    listItem.prepend(deleteBtn);
     tasks.appendChild(listItem);
+  }
+
+  function getPriorityColor(priority) {
+    switch (priority) {
+      case "High":
+        return "red";
+      case "Medium":
+        return "orange";
+      case "Low":
+        return "green";
+      default:
+        return "black";
+    }
   }
 });
